@@ -1,0 +1,4 @@
+<launch>
+  <node name="soiam_node" pkg="soiam" type="soiam_node">
+  </node>
+</launch>
