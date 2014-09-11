@@ -27,7 +27,7 @@ SoiamNode::SoiamNode()
    	pose_channel = nh_.resolveName("ardrone/predictedPose");
 	control_channel	= nh_.resolveName("cmd_vel");
 	PID_channel	= nh_.resolveName("PIDcmd_vel");
-   	common_channel = nh_.resolveName("tum_ardrone/com");
+   	command_channel = nh_.resolveName("tum_ardrone/com");
 	predict_channel	= nh_.resolveName("cmd_vel");
 	learning_toggle = nh_.resolveName("soiam/train");
 	predicting_toggle = nh_.resolveName("soiam/predict");
@@ -67,9 +67,9 @@ SoiamNode::SoiamNode()
 
 	// channels - subs
 	pose_sub	= nh_.subscribe(pose_channel, 10, &SoiamNode::poseCb, this);
-	PID_sub		= nh_.subscribe(PID_channel, 1, &SoiamNode::PIDCb, this);
+	PID_sub		= nh_.subscribe(PID_channel, 10, &SoiamNode::PIDCb, this);
 	vel_sub		= nh_.subscribe(control_channel, 10, &SoiamNode::velCb, this);
-	com_sub		= nh_.subscribe(common_channel, 50, &SoiamNode::comCb, this);
+	com_sub		= nh_.subscribe(command_channel, 50, &SoiamNode::comCb, this);
 	isLearning_sub	= nh_.subscribe(learning_toggle, 50, &SoiamNode::learnCb, this);
 	isPredict_sub	= nh_.subscribe(predicting_toggle, 50, &SoiamNode::predCb, this);
 
@@ -78,8 +78,8 @@ SoiamNode::SoiamNode()
 	predict_pub	= nh_.advertise<geometry_msgs::Twist>(predict_channel,1);
 
 	// create soinn network
-	Xsoinn = new CSOINN(Dim,40000,850,1);
-	Ysoinn = new CSOINN(Dim,40000,850,1);
+	Xsoinn = new CSOINN(Dim,7000,850,1);
+	Ysoinn = new CSOINN(Dim,7000,850,1);
 	//zsoinn = new CSOINN(2*Key,40000,850,1);
 }
 
@@ -131,7 +131,7 @@ void SoiamNode::PIDCb(const geometry_msgs::TwistConstPtr PIDPtr)
 
 
 void SoiamNode::comCb(const std_msgs::StringConstPtr str)
-{
+{	
 }
 
 void SoiamNode::learnCb(const std_msgs::Bool::ConstPtr learn)
@@ -203,8 +203,8 @@ void SoiamNode::Loop()
 
 
 			//random input
-			randomX = RandomInput(-0.2,0.2);
-			randomY = RandomInput(-0.2,0.2);
+			randomX = RandomInput(-0.1,0.1);
+			randomY = RandomInput(-0.1,0.1);
 			randomCMD.pitch = randomX + pidcmd.pitch;
 			randomCMD.roll = randomY + pidcmd.roll;
 			randomCMD.gaz = pidcmd.gaz;

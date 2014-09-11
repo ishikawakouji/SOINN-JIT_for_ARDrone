@@ -81,7 +81,7 @@ private:
 	std::string pose_channel;
 	std::string control_channel;
 	std::string PID_channel;
-	std::string common_channel;
+	std::string command_channel;
 	std::string predict_channel;
 	std::string learning_toggle;
 	std::string predicting_toggle;
